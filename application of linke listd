@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure of a node
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert a node at the beginning of the list
+struct Node* insertAtBeginning(struct Node* head, int data) {
+    struct Node* newNode = createNode(data);
+    newNode->next = head;
+    return newNode;
+}
+
+// Function to insert a node at the end of the list
+struct Node* insertAtEnd(struct Node* head, int data) {
+    struct Node* newNode = createNode(data);
+    if (head == NULL)
+        return newNode;
+
+    struct Node* temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+    return head;
+}
+
+// Function to delete a node with given key from the list
+struct Node* deleteNode(struct Node* head, int key) {
+    if (head == NULL)
+        return head;
+
+    // If the key to be deleted is at the beginning
+    if (head->data == key) {
+        struct Node* temp = head;
+        head = head->next;
+        free(temp);
+        return head;
+    }
+
+    // Find the previous node of the node to be deleted
+    struct Node* prev = NULL;
+    struct Node* current = head;
+    while (current != NULL && current->data != key) {
+        prev = current;
+        current = current->next;
+    }
+
+    // If the key was not present in the list
+    if (current == NULL)
+        return head;
+
+    // Unlink the node from linked list
+    prev->next = current->next;
+    free(current);
+    return head;
+}
+
+// Function to search for a key in the list
+int search(struct Node* head, int key) {
+    struct Node* current = head;
+    while (current != NULL) {
+        if (current->data == key)
+            return 1; // Key found
+        current = current->next;
+    }
+    return 0; // Key not found
+}
+
+// Function to display the elements of the list
+void display(struct Node* head) {
+    struct Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+// Main function
+int main() {
+    struct Node* head = NULL;
+
+    // Insert elements at the beginning
+    head = insertAtBeginning(head, 10);
+    head = insertAtBeginning(head, 20);
+    head = insertAtBeginning(head, 30);
+
+    printf("List after insertion at the beginning: ");
+    display(head);
+
+    // Insert elements at the end
+    head = insertAtEnd(head, 40);
+    head = insertAtEnd(head, 50);
+
+    printf("List after insertion at the end: ");
+    display(head);
+
+    // Search for an element
+    int key = 30;
+    if (search(head, key))
+        printf("%d is present in the list.\n", key);
+    else
+        printf("%d is not present in the list.\n", key);
+
+    // Delete an element
+    key = 20;
+    head = deleteNode(head, key);
+    printf("List after deletion of %d: ", key);
+    display(head);
+
+    return 0;
+}
